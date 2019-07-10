@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="testView2Skin" width="900" height="300" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Button id="btnBack" label="回到前界面" x="741" y="68" anchorOffsetX="0" width="144" anchorOffsetY="0" height="180"/>
+</e:Skin>

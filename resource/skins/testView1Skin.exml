@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="testView1Skin" width="900" height="1600" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Image source="bg_jpg" horizontalCenter="0" verticalCenter="0"/>
+	<e:Button id="btnOpen" label="打开界面" x="139" y="1433" anchorOffsetX="0" width="602" anchorOffsetY="0" height="143">
+		<e:skinName>
+			<e:Skin states="up,down,disabled" minHeight="50" minWidth="100">
+			<e:Image width="100%" height="100%" scale9Grid="1,3,8,8" alpha.disabled="0.5" source="button_up_png" source.down="button_down_png"/>
+			<e:Label id="labelDisplay" top="8" bottom="8" left="8" right="8" size="20" textColor="0xFFFFFF" verticalAlign="middle" textAlign="center" fontFamily="Microsoft YaHei"/>
+			<e:Image id="iconDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Image source="mainScene_png" scaleX="0.3" scaleY="0.1"/>
+	<e:Image source="mainScene_png" scaleX="0.3" scaleY="0.1" x="0" y="128"/>
+	<e:Image source="loading_png" x="331" y="11" scaleX="0.2" scaleY="0.2"/>
+	<e:Image source="loading_png" x="540" y="4" scaleX="0.2" scaleY="0.2"/>
+</e:Skin>

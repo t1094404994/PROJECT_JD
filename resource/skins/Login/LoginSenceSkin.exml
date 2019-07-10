@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="LoginSenceSkin" width="900" height="1600" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing">
+	<e:Button id="btnInto" label="进入界面" x="40" y="55" anchorOffsetX="0" width="801" anchorOffsetY="0" height="1449">
+		<e:skinName>
+			<e:Skin states="up,down,disabled" minHeight="50" minWidth="100">
+			<e:Image width="100%" height="100%" scale9Grid="1,3,8,8" alpha.disabled="0.5" source="button_up_png" source.down="button_down_png"/>
+			<e:Label id="labelDisplay" top="8" bottom="8" left="8" right="8" size="20" textColor="0xFFFFFF" verticalAlign="middle" textAlign="center" fontFamily="Microsoft YaHei"/>
+			<e:Image id="iconDisplay" horizontalCenter="0" verticalCenter="0"/>
+			</e:Skin>
+		</e:skinName>
+	</e:Button>
+	<e:Label id="ui_label" text="点我" x="18" y="34" fontFamily="Microsoft YaHei"/>
+</e:Skin>
