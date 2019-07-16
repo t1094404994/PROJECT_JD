@@ -40,23 +40,11 @@ class SenceManager extends SingtonClass{
      * @param key 场景标识
      * @param source  场景资源
      */
-    public openSence(key:number,source?:string[]){
+    public openSence(key:number,source?:string[],oldSence?:BaseSence):void{
         let sence:BaseSence=this.sences[key];
         if(!sence) return;
-        if(source){
-            sence.setSource(source);
-            App.getEasyLoading().show();
-            sence.loadResource(App.getEasyLoading().setProgress,function(){
-                App.getEasyLoading().hide();
-                App.getStageUtils().addToStage(sence);
-                sence.onEnter();
-            }.bind(this),function(){
-                sence.setInit(true);
-            }.bind(this))
-        }else{
-            App.getStageUtils().addToStage(sence);
-            sence.onEnter();
-        }
+        sence.onEnter();
+        App.getStageUtils().addToStage(sence);
         this._currScene=key;
     }
     /**
@@ -67,9 +55,9 @@ class SenceManager extends SingtonClass{
         let newSence:BaseSence=this.sences[tokey];
         if(!newSence) return;
         let oldSecne:BaseSence=this.sences[this._currScene];
-        App.getStageUtils().removeFormStage(oldSecne);
         oldSecne.onExit();
-        this.openSence(tokey,source);
+        App.getStageUtils().removeFormStage(oldSecne);
+        this.openSence(tokey,source,oldSecne);
     }
     /**
      * 关闭场景

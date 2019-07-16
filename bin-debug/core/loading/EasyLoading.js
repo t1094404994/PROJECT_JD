@@ -1,16 +1,13 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = this && this.__extends || function __extends(t, e) { 
+ function r() { 
+ this.constructor = t;
+}
+for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
+r.prototype = e.prototype, t.prototype = new r();
+};
 /**
  * 转圈加载
  */
@@ -29,12 +26,12 @@ var EasyLoading = (function (_super) {
         RES.getResByUrl("resource/assets/P_JiaZai_03.png", function (texture) {
             this.loadImage = new egret.Bitmap();
             this.loadImage.texture = texture;
-            this.loadImage.x = this.loadImage.anchorOffsetX = this.loadImage.width / 2;
-            this.loadImage.x = this.loadImage.anchorOffsetY = this.loadImage.height / 2;
             this.container.addChild(this.loadImage);
-            App.getFrameManager().creadFrameHander(this.onFrame, this, 1, -1);
+            App.getStageUtils().onCenter(this.container, this.loadImage, true);
+            this.hander = App.getFrameManager().creadFrameHander(this.onFrame, this, 1, -1, null, true);
         }, this, RES.ResourceItem.TYPE_IMAGE);
         this.container.addChild(this.loadText);
+        this.dispos();
     };
     /**
      * 帧转圈圈
@@ -45,22 +42,44 @@ var EasyLoading = (function (_super) {
     EasyLoading.prototype.removeFrame = function () {
         App.getFrameManager().removeHander(this.onFrame, this);
     };
+    EasyLoading.prototype.loadSource = function (source, callFun) {
+        this.callFun = callFun;
+        this.show();
+        ResUtil.loadGroups(source, this.setProgress, null, this.loadComplete, this);
+    };
+    EasyLoading.prototype.loadComplete = function (data) {
+        this.hide();
+        this.callFun();
+        this.callFun = null;
+    };
+    EasyLoading.prototype.dispos = function () {
+        this.loadText.text = 0 + "%";
+    };
+    EasyLoading.prototype.onReSize = function () {
+        App.getStageUtils().onCenter(this.container, this.loadText, false);
+    };
     /**
      * 设置进度
      */
     EasyLoading.prototype.setProgress = function (groupData) {
-        App.getEasyLoading().loadText.text = String(groupData.getPercent()) + "%";
+        this.loadText.text = String(groupData.getPercent()) + "%";
     };
     /**
      * 显示loading
      */
     EasyLoading.prototype.show = function () {
+        this.hander.freezed = false;
         App.getStageUtils().addToStage(this.container, true);
+        App.getStageUtils().onCenter(this.container, this.loadText, false);
+        this.loadText.addEventListener(egret.Event.RESIZE, this.onReSize, this);
     };
     /**
      * 隐藏loading
      */
     EasyLoading.prototype.hide = function () {
+        this.hander.freezed = true;
+        this.dispos();
+        this.loadText.removeEventListener(egret.Event.RESIZE, this.onReSize, this);
         App.getStageUtils().removeFormStage(this.container);
     };
     return EasyLoading;

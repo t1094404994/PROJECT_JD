@@ -84,14 +84,14 @@ class BaseSence extends egret.DisplayObjectContainer{
      * 加载资源组
      * @param source 
      */
-    public loadResource(loadProGress:(data:GroupData)=>void,loadComplete:(data:GroupData)=>void, initComplete:Function){
-        if (this._srouce && this._srouce.length > 0) {
-            ResUtil.loadGroups(this._srouce,loadProGress,null,loadComplete,this);
-            this.once(eui.UIEvent.CREATION_COMPLETE, initComplete, this);
-        }
-        else {
-            loadComplete(null);
-            initComplete();
-        }
-    }
+    // public loadResource(loadProGress:(data:GroupData)=>void,loadComplete:(data:GroupData)=>void, initComplete:Function){
+    //     if (this._srouce && this._srouce.length > 0) {
+    //         ResUtil.loadGroups(this._srouce,loadProGress,null,loadComplete,this);
+    //         this.once(eui.UIEvent.CREATION_COMPLETE, initComplete, this);
+    //     }
+    //     else {
+    //         loadComplete(null);
+    //         initComplete();
+    //     }
+    // }
 }

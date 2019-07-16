@@ -1,16 +1,13 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = this && this.__extends || function __extends(t, e) { 
+ function r() { 
+ this.constructor = t;
+}
+for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
+r.prototype = e.prototype, t.prototype = new r();
+};
 /**
  * 游戏场景管理类
  */
@@ -53,25 +50,12 @@ var SenceManager = (function (_super) {
      * @param key 场景标识
      * @param source  场景资源
      */
-    SenceManager.prototype.openSence = function (key, source) {
+    SenceManager.prototype.openSence = function (key, source, oldSence) {
         var sence = this.sences[key];
         if (!sence)
             return;
-        if (source) {
-            sence.setSource(source);
-            App.getEasyLoading().show();
-            sence.loadResource(App.getEasyLoading().setProgress, function () {
-                App.getEasyLoading().hide();
-                App.getStageUtils().addToStage(sence);
-                sence.onEnter();
-            }.bind(this), function () {
-                sence.setInit(true);
-            }.bind(this));
-        }
-        else {
-            App.getStageUtils().addToStage(sence);
-            sence.onEnter();
-        }
+        sence.onEnter();
+        App.getStageUtils().addToStage(sence);
         this._currScene = key;
     };
     /**
@@ -83,9 +67,9 @@ var SenceManager = (function (_super) {
         if (!newSence)
             return;
         var oldSecne = this.sences[this._currScene];
-        App.getStageUtils().removeFormStage(oldSecne);
         oldSecne.onExit();
-        this.openSence(tokey, source);
+        App.getStageUtils().removeFormStage(oldSecne);
+        this.openSence(tokey, source, oldSecne);
     };
     /**
      * 关闭场景

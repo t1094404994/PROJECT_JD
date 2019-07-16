@@ -69,11 +69,11 @@ class ViewManager extends SingtonClass{
             view.addToParent();
             view.open(...param);
         }else{
-            App.getEasyLoading().show();
+            //App.getEasyLoading().show();
             view.loadResource(App.getEasyLoading().setProgress,function(){
                 view.setVisible(false);
                 view.addToParent();
-                App.getEasyLoading().hide();
+                //App.getEasyLoading().hide();
             }.bind(this),function(){
                 view.initUI();
                 view.initData();

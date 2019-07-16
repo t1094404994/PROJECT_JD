@@ -5,6 +5,8 @@ class EasyLoading extends SingtonClass implements ILoadingUI{
     private container:egret.DisplayObjectContainer; //容器
     private loadImage:egret.Bitmap; //转圈图片
     public loadText:egret.TextField; //进度文字
+    private callFun:Function;
+    private hander:FrameHander;
     constructor(){
         super();
         this.init();
@@ -17,12 +19,12 @@ class EasyLoading extends SingtonClass implements ILoadingUI{
         RES.getResByUrl("resource/assets/P_JiaZai_03.png",function(texture:egret.Texture){
             this.loadImage=new egret.Bitmap();
             this.loadImage.texture=texture;
-            this.loadImage.x=this.loadImage.anchorOffsetX=this.loadImage.width/2;
-            this.loadImage.x=this.loadImage.anchorOffsetY=this.loadImage.height/2;
             this.container.addChild(this.loadImage);
-            App.getFrameManager().creadFrameHander(this.onFrame,this,1,-1);
+            App.getStageUtils().onCenter(this.container,this.loadImage,true);
+            this.hander=App.getFrameManager().creadFrameHander(this.onFrame,this,1,-1,null,true);
         },this,RES.ResourceItem.TYPE_IMAGE);
         this.container.addChild(this.loadText);
+        this.dispos();
     }
     /**
      * 帧转圈圈
@@ -33,22 +35,44 @@ class EasyLoading extends SingtonClass implements ILoadingUI{
     public removeFrame(){
         App.getFrameManager().removeHander(this.onFrame,this);
     }
+    public loadSource(source:string[],callFun:Function){
+        this.callFun=callFun;
+        this.show();
+        ResUtil.loadGroups(source,this.setProgress,null,this.loadComplete,this);
+    }
+    private loadComplete(data:GroupData):void{
+        this.hide();
+        this.callFun();
+        this.callFun=null;
+    }
+    private dispos(){
+        this.loadText.text=0+"%";
+    }
+    private onReSize(){
+        App.getStageUtils().onCenter(this.container,this.loadText,false);
+    }
     /**
      * 设置进度
      */
     setProgress(groupData:GroupData):void{
-        App.getEasyLoading().loadText.text=String(groupData.getPercent())+"%";
+        this.loadText.text=String(groupData.getPercent())+"%";
     }
     /**
      * 显示loading
      */
     show():void{
+        this.hander.freezed=false;
         App.getStageUtils().addToStage(this.container,true);
+        App.getStageUtils().onCenter(this.container,this.loadText,false);
+        this.loadText.addEventListener(egret.Event.RESIZE,this.onReSize,this);
     }
     /**
      * 隐藏loading
      */
     hide():void{
+        this.hander.freezed=true;
+        this.dispos();
+        this.loadText.removeEventListener(egret.Event.RESIZE,this.onReSize,this);
         App.getStageUtils().removeFormStage(this.container);
     }
 }

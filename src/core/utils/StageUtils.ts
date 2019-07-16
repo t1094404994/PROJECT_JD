@@ -64,8 +64,7 @@ class StageUtils extends SingtonClass{
     public addToStage(view:egret.DisplayObject,center?:boolean,index?:number){
         this.stage.addChild(view);
         if(center){
-            view.x=Math.floor(this.stage.width/2-view.width/2);
-            view.y=Math.floor(this.stage.height/2-view.height/2);
+            this.onCenter(this.stage,view,false);
         }
     }
     /**
@@ -80,4 +79,23 @@ class StageUtils extends SingtonClass{
         this.stage.width=900;
         this.stage.height=1600;
     }
+    /**
+     * 将显示对象居中(相对于父容器)
+     * @param parent 父容器
+     * @param object 对象
+     * @param offset 是否通过偏移锚点达到效果,一般在对象需要旋转时设置 
+     */
+    public onCenter(parent:egret.DisplayObjectContainer,object:egret.DisplayObject,offset:boolean=false){
+        object.x=parent.width>>1;
+        object.y=parent.height>>1;
+        let lx:number=object.width>>1;
+        let ly:number=object.height>>1;
+        if(offset){
+            object.anchorOffsetX=lx;
+            object.anchorOffsetY=ly;
+        }else{
+            object.x-=lx;
+            object.y-=ly;
+        }
+    }  
 }
