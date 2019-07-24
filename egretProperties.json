@@ -43,6 +43,10 @@
     },
     {
 			"name": "dragonBones"
-		}
+    },
+    {
+      "name": "physics",
+      "path":"./physics"
+    }
   ]
 }

@@ -2,4 +2,8 @@ class Test1Model extends BaseModel{
     constructor($controller:BaseController){
         super($controller);
     }
+    //创建一面墙
+    private createGround(){
+
+    }
 }
