@@ -6,6 +6,7 @@ class LoginModel extends BaseModel{
     private onTap(){
         let source:string[]=["testtttt"];
         App.getEasyLoading().loadSource(source,this.souceCom.bind(this));
+        //this.souceCom();
     }
     private souceCom(){
         let sence=new Test1Sence();

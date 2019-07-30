@@ -526,7 +526,7 @@ declare module p2 {
         };
 
         static DYNAMIC: number;
-        static STATIC: number;
+        static wSTATIC: number;
         static KINEMATIC: number;
         static AWAKE: number;
         static SLEEPY: number;

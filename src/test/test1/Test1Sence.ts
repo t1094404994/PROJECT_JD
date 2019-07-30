@@ -1,8 +1,8 @@
 class Test1Sence extends BaseSence{
     constructor(){
         super();
-        this.width=900;
-        this.height=1600;
+        this.width=640;
+        this.height=1136;
     }
     public onEnter(){
         let controller:Test1Controller=new Test1Controller();

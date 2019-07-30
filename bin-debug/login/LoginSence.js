@@ -15,8 +15,8 @@ var LoginSence = (function (_super) {
     __extends(LoginSence, _super);
     function LoginSence() {
         var _this = _super.call(this) || this;
-        _this.width = 900;
-        _this.height = 1600;
+        _this.width = 640;
+        _this.height = 1136;
         return _this;
     }
     LoginSence.prototype.onEnter = function () {

@@ -15,8 +15,8 @@ var Test1Sence = (function (_super) {
     __extends(Test1Sence, _super);
     function Test1Sence() {
         var _this = _super.call(this) || this;
-        _this.width = 900;
-        _this.height = 1600;
+        _this.width = 640;
+        _this.height = 1136;
         return _this;
     }
     Test1Sence.prototype.onEnter = function () {

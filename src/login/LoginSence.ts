@@ -1,8 +1,8 @@
 class LoginSence extends BaseSence{
     constructor(){
         super();
-        this.width=900;
-        this.height=1600;
+        this.width=640;
+        this.height=1136;
     }
     public onEnter(){
         let loginController:LoginController=new LoginController();

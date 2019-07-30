@@ -93,6 +93,99 @@ var Main = (function (_super) {
         App.getStageUtils().initwh();
         App.getSenceManger().register(SenceConst.LOGIN, new LoginSence());
         App.getSenceManger().openSence(SenceConst.LOGIN);
+        //this.createGameScene();
+    };
+    /**
+     * 创建场景界面
+     * Create scene interface
+     */
+    Main.prototype.createGameScene = function () {
+        var img = new egret.Bitmap();
+        img = this.createBitmapByName("bg_jpg");
+        img.width = this.stage.stageWidth;
+        img.height = this.stage.stageHeight;
+        this.addChild(img);
+        this.CreateWorld();
+        this.CreatePlane();
+        RES.loadGroup("testtttt");
+        this.addEventListener(egret.Event.ENTER_FRAME, this.update, this);
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN, this.onButtonClick, this);
+    };
+    Main.prototype.CreateWorld = function () {
+        this.world = new p2.World();
+        this.world.sleepMode = p2.World.BODY_SLEEPING;
+        this.world.gravity = [0, 10];
+    };
+    Main.prototype.CreatePlane = function () {
+        var planeShape = new p2.Plane();
+        this.planeBody = new p2.Body({
+            type: p2.Body.wSTATIC,
+            position: [0, this.stage.stageHeight],
+        });
+        this.planeBody.angle = Math.PI;
+        this.planeBody.displays = [];
+        this.planeBody.addShape(planeShape);
+        this.world.addBody(this.planeBody);
+    };
+    Main.prototype.onButtonClick = function (e) {
+        if (Math.random() > 0.5) {
+            //添加方形刚体 
+            var boxShape = new p2.Box({ width: 140, height: 80 });
+            this.shpeBody = new p2.Body({ mass: 1, position: [e.stageX, e.stageY], angularVelocity: 1 });
+            this.shpeBody.addShape(boxShape);
+            this.world.addBody(this.shpeBody);
+            this.display = this.createBitmapByName("loading_png");
+            this.display.width = boxShape.width;
+            this.display.height = boxShape.height;
+            console.log(e.stageX, e.stageY);
+        }
+        else {
+            //添加圆形刚体
+            var circleShape = new p2.Circle({ radius: 60 });
+            this.shpeBody = new p2.Body({ mass: 1, position: [e.stageX, e.stageY] });
+            this.shpeBody.addShape(circleShape);
+            this.world.addBody(this.shpeBody);
+            this.display = this.createBitmapByName("loading_png");
+            this.display.width = circleShape.radius * 2;
+            this.display.height = circleShape.radius * 2;
+        }
+        this.display.anchorOffsetX = this.display.width / 2;
+        this.display.anchorOffsetY = this.display.height / 2;
+        this.display.x = -100;
+        this.display.y = -100;
+        this.display.rotation = 270;
+        this.shpeBody.displays = [this.display];
+        this.addChild(this.display);
+    };
+    //帧事件，步函数
+    Main.prototype.update = function () {
+        this.world.step(1);
+        var l = this.world.bodies.length;
+        for (var i = 0; i < l; i++) {
+            var boxBody = this.world.bodies[i];
+            var box = boxBody.displays[0];
+            if (box) {
+                box.x = boxBody.position[0];
+                box.y = boxBody.position[1];
+                //这里刷新图片旋转
+                box.rotation = boxBody.angle * 180 / Math.PI;
+                if (boxBody.sleepState == p2.Body.SLEEPING) {
+                    box.alpha = 0.5;
+                }
+                else {
+                    box.alpha = 1;
+                }
+            }
+        }
+    };
+    /**
+     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
+     */
+    Main.prototype.createBitmapByName = function (name) {
+        var result = new egret.Bitmap();
+        var texture = RES.getRes(name);
+        result.texture = texture;
+        return result;
     };
     return Main;
 }(eui.UILayer));

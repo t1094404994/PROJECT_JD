@@ -85,5 +85,114 @@ class Main extends eui.UILayer {
         App.getStageUtils().initwh();
         App.getSenceManger().register(SenceConst.LOGIN,new LoginSence());
         App.getSenceManger().openSence(SenceConst.LOGIN);
+        //this.createGameScene();
+    }
+    /**
+     * 创建场景界面
+     * Create scene interface
+     */
+    protected createGameScene(): void {
+        let img:egret.Bitmap = new egret.Bitmap();
+        img = this.createBitmapByName("bg_jpg");
+        img.width = this.stage.stageWidth;
+        img.height = this.stage.stageHeight;
+        this.addChild(img);
+        this.CreateWorld();
+        this.CreatePlane();
+        RES.loadGroup("testtttt");
+        this.addEventListener(egret.Event.ENTER_FRAME,this.update,this);
+        this.stage.addEventListener(egret.TouchEvent.TOUCH_BEGIN,this.onButtonClick,this);
+    }
+
+    //创建Word世界
+    private world:p2.World;
+    private CreateWorld(){
+        this.world = new p2.World();
+        this.world.sleepMode = p2.World.BODY_SLEEPING;
+        this.world.gravity = [0,10]
+    }
+
+    //生成地板Plane
+    private planeBody:p2.Body;
+    private CreatePlane(){
+        let planeShape:p2.Plane = new p2.Plane();
+        this.planeBody= new p2.Body({
+            type:p2.Body.wSTATIC,
+            position:[0,this.stage.stageHeight],
+        });
+        this.planeBody.angle = Math.PI;
+        this.planeBody.displays = [];
+        this.planeBody.addShape(planeShape);
+        this.world.addBody(this.planeBody);
+    }
+
+
+    private shpeBody:p2.Body;
+    private display:egret.DisplayObject;
+    private onButtonClick(e:egret.TouchEvent) {
+        if(Math.random() >0.5){
+            //添加方形刚体 
+            var boxShape:p2.Shape = new p2.Box({width:140 ,height:80});
+            this.shpeBody = new p2.Body({ mass: 1, position: [e.stageX, e.stageY], angularVelocity: 1});
+            this.shpeBody.addShape(boxShape);
+            this.world.addBody(this.shpeBody);
+            this. display= this.createBitmapByName("loading_png");
+            this.display.width = (<p2.Box>boxShape).width 
+            this.display.height = (<p2.Box>boxShape).height     
+            console.log(e.stageX,e.stageY);
+
+        }
+        else{
+            //添加圆形刚体
+            var circleShape:p2.Shape = new p2.Circle({radius:60});
+            this.shpeBody = new p2.Body({ mass: 1, position: [e.stageX, e.stageY]});
+            this.shpeBody.addShape(circleShape);
+            this.world.addBody(this.shpeBody);
+            this.display = this.createBitmapByName("loading_png");
+            this.display.width = (<p2.Circle>circleShape).radius * 2 
+            this.display.height = (<p2.Circle>circleShape).radius * 2
+        }
+            this.display.anchorOffsetX = this.display.width / 2
+            this.display.anchorOffsetY = this.display.height / 2;
+            this.display.x = -100;
+            this.display.y = -100;
+            this.display.rotation = 270
+            this.shpeBody.displays = [this.display];
+            this.addChild(this.display);  
+
+
+    }
+
+    //帧事件，步函数
+    private update() {
+        this.world.step(1);
+        var l = this.world.bodies.length;
+        for (var i:number = 0; i < l; i++) {
+            var boxBody:p2.Body = this.world.bodies[i];
+            var box:egret.DisplayObject = boxBody.displays[0];
+            if (box) {
+                box.x = boxBody.position[0];
+                box.y = boxBody.position[1];
+                //这里刷新图片旋转
+                box.rotation = boxBody.angle * 180 / Math.PI;
+                if (boxBody.sleepState == p2.Body.SLEEPING) {
+                    box.alpha = 0.5;
+                }
+                else {
+                    box.alpha = 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * 根据name关键字创建一个Bitmap对象。name属性请参考resources/resource.json配置文件的内容。
+     */
+    private createBitmapByName(name:string):egret.Bitmap {
+        var result:egret.Bitmap = new egret.Bitmap();
+        var texture:egret.Texture = RES.getRes(name);
+        result.texture = texture;
+        return result;
+
     }
 }

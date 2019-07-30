@@ -21,6 +21,7 @@ var LoginModel = (function (_super) {
     LoginModel.prototype.onTap = function () {
         var source = ["testtttt"];
         App.getEasyLoading().loadSource(source, this.souceCom.bind(this));
+        //this.souceCom();
     };
     LoginModel.prototype.souceCom = function () {
         var sence = new Test1Sence();
