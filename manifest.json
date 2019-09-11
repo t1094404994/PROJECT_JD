@@ -41,6 +41,7 @@
 		"bin-debug/core/utils/DebugUtils.js",
 		"bin-debug/core/utils/DisplayUtils.js",
 		"bin-debug/core/utils/FrameManager.js",
+		"bin-debug/core/utils/MathUtil.js",
 		"bin-debug/core/utils/MD5.js",
 		"bin-debug/core/utils/ObjectPool.js",
 		"bin-debug/core/utils/PhysicsUtils.js",

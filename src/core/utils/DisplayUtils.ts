@@ -53,6 +53,16 @@ class DisplayUtils extends SingtonClass{
     }
 
     /**
+     * 创建一个EUI方块
+     * @param w 宽
+     * @param h 高
+     * @param x 位置
+     * @param y 位置
+     */
+    public createRect(w:number,h:number,x:number,y:number){
+        
+    }
+    /**
      * 从父级移除child
      * @param child
      */
