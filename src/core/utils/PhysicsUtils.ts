@@ -112,7 +112,6 @@ class PhysicsUtils{
      * @param type 类型 1:静态 2：
      * @param world 物理world
      * @param display 
-     * @param id p2body的ID
      * @param vx 速度 ()
      * @param sh 场景高度 
      * @param w 宽
@@ -120,7 +119,7 @@ class PhysicsUtils{
      * @param x 位置
      * @param y 位置
      */
-    public static createGround(type:number=0,world:p2.World,displays:Array<egret.DisplayObject>,id:number,vx:number,sh:number,w:number,h:number,x:number,y:number):p2.Body{
+    public static createGround(type:number=0,world:p2.World,displays:Array<egret.DisplayObject>,vx:number,sh:number,w:number,h:number,x:number,y:number):p2.Body{
         let p:egret.Point=PhysicsUtils.epToPp(x,y,sh);
         let p2Body:p2.Body;
         if(type){
@@ -128,7 +127,6 @@ class PhysicsUtils{
         }else{
             p2Body=new p2.Body({mass: 1,position: [p.x,p.y],type:p2.Body.DYNAMIC,angularVelocity: 1});
         }
-        p2Body.id=id;
         console.log("位置:"+p2Body.position);
         world.addBody(p2Body);
         let p2Rect:p2.Box=new p2.Box({width:PhysicsUtils.eVToPv(w),height:PhysicsUtils.eVToPv(h)});

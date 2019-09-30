@@ -24,9 +24,9 @@ var BaseEuiView = (function (_super) {
         _this._controller = $controller;
         _this._myParent = $parent;
         _this._isInit = false;
-        _this.percentHeight = 100;
-        _this.percentWidth = 100;
         return _this;
+        // this.percentHeight = 100;
+        // this.percentWidth = 100;
     }
     Object.defineProperty(BaseEuiView.prototype, "myParent", {
         /**

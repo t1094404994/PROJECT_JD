@@ -17,8 +17,8 @@ class BaseEuiView extends eui.Component implements IBaseView{
         this._controller = $controller;
         this._myParent = $parent;
         this._isInit = false;
-        this.percentHeight = 100;
-        this.percentWidth = 100;
+        // this.percentHeight = 100;
+        // this.percentWidth = 100;
     }
 
     /**
