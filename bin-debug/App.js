@@ -14,12 +14,6 @@ var App = (function () {
         return FrameManager.getSingtonInstance();
     };
     /**
-     * 显示对象工具类
-     */
-    App.getDisplayUtils = function () {
-        return DisplayUtils.getSingtonInstance();
-    };
-    /**
      * 控制器管理类
      */
     App.getControllerManager = function () {

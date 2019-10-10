@@ -9,12 +9,6 @@ class App{
         return FrameManager.getSingtonInstance();
     }
     /**
-     * 显示对象工具类
-     */
-    public static getDisplayUtils():DisplayUtils{
-        return DisplayUtils.getSingtonInstance();
-    }
-    /**
      * 控制器管理类
      */
     public static getControllerManager():ControllerManager{

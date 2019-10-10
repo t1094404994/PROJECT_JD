@@ -1,27 +1,19 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var __extends = this && this.__extends || function __extends(t, e) { 
- function r() { 
- this.constructor = t;
-}
-for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
-r.prototype = e.prototype, t.prototype = new r();
-};
 /**
  * 显示对象工具类
+ * 使用物理引擎,所有父显示对象的锚点都必须居中
  */
-var DisplayUtils = (function (_super) {
-    __extends(DisplayUtils, _super);
+var DisplayUtils = (function () {
     function DisplayUtils() {
-        return _super !== null && _super.apply(this, arguments) || this;
     }
     /**
      * 创建一个Bitmap
      * @param resName resource.json中配置的name
      * @returns {egret.Bitmap}
      */
-    DisplayUtils.prototype.createBitmap = function (resName) {
+    DisplayUtils.createBitmap = function (resName) {
         var result = new egret.Bitmap();
         var texture = RES.getRes(resName);
         result.texture = texture;
@@ -33,7 +25,7 @@ var DisplayUtils = (function (_super) {
      * @param color;
      * @param otherParam;
      */
-    DisplayUtils.prototype.createTextField = function (size, color, otherParam) {
+    DisplayUtils.createTextField = function (size, color, otherParam) {
         if (size === void 0) { size = 12; }
         if (color === void 0) { color = 0xFFFFFF; }
         var txt = new egret.TextField();
@@ -49,7 +41,7 @@ var DisplayUtils = (function (_super) {
     /**
      * 创建一个位图字体
      */
-    DisplayUtils.prototype.createBitmapFont = function (fontName) {
+    DisplayUtils.createBitmapFont = function (fontName) {
         var bpFont = new egret.BitmapText();
         bpFont.font = RES.getRes(fontName);
         return bpFont;
@@ -59,7 +51,7 @@ var DisplayUtils = (function (_super) {
      * @param resName
      * @returns {egret.Bitmap}
      */
-    DisplayUtils.prototype.createEuiImage = function (resName) {
+    DisplayUtils.createEuiImage = function (resName) {
         var result = new eui.Image();
         var texture = RES.getRes(resName);
         result.source = texture;
@@ -69,16 +61,48 @@ var DisplayUtils = (function (_super) {
      * 创建一个EUI方块
      * @param w 宽
      * @param h 高
-     * @param x 位置
-     * @param y 位置
+     * @param x 中心的位置
+     * @param y 中心的位置
      */
-    DisplayUtils.prototype.createRect = function (w, h, x, y) {
+    DisplayUtils.createRect = function (w, h, x, y, color) {
+        if (color === void 0) { color = 0x0000000; }
+        var rect = new eui.Rect(w, h, color);
+        rect.anchorOffsetX = w >> 1;
+        rect.anchorOffsetY = h >> 1;
+        rect.x = x;
+        rect.y = y;
+        return rect;
+    };
+    /**
+     * 通过矢量绘图创建一个圆
+     * @param r 半径
+     * @param x 中心的位置
+     * @param y 中心的位置
+     * @param color 填充色
+     * @param line 圆的线条粗细
+     */
+    DisplayUtils.cerateCircle = function (r, x, y, color, line) {
+        if (color === void 0) { color = 0x000000; }
+        if (line === void 0) { line = 0; }
+        var shape = new egret.Shape();
+        var post = line >> 1;
+        shape.graphics.lineStyle(line, 0x000000);
+        shape.graphics.beginFill(color);
+        shape.graphics.drawCircle(r + post, r + post, r);
+        shape.graphics.moveTo(r + post, r + post);
+        shape.graphics.lineTo(2 * r + line, r + post);
+        shape.graphics.endFill();
+        shape.anchorOffsetX = shape.width >> 1;
+        shape.anchorOffsetY = shape.height >> 1;
+        shape.x = x;
+        shape.y = y;
+        return shape;
     };
     /**
      * 从父级移除child
      * @param child
      */
-    DisplayUtils.prototype.removeFromParent = function (child) {
+    DisplayUtils.removeFromParent = function (child) {
         if (child.parent == null)
             return;
         child.parent.removeChild(child);
@@ -88,11 +112,11 @@ var DisplayUtils = (function (_super) {
      * @param child
      * @param parent
      */
-    DisplayUtils.prototype.addChild = function (child, parent) {
+    DisplayUtils.addChild = function (child, parent) {
         if (!child || !parent)
             return;
         parent.addChild(child);
     };
     return DisplayUtils;
-}(SingtonClass));
+}());
 __reflect(DisplayUtils.prototype, "DisplayUtils");

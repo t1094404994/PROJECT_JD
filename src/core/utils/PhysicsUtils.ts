@@ -135,4 +135,37 @@ class PhysicsUtils{
         egret.Point.release(p);
         return p2Body;
     }
+    /**
+     * 创建一个方形刚体,使物理和显示对象绑定
+     * @param bodyType 刚体类型
+     * @param world 世界
+     * @param wh 父级高度
+     */
+    public static createSimpleBox(bodyType:number,display:egret.DisplayObject,world:p2.World,wh:number,mass:number=1):p2.Body{
+        let p:egret.Point=PhysicsUtils.epToPp(display.x,display.y,wh);
+        let p2Body:p2.Body=new p2.Body({position:[p.x,p.y],type:bodyType,mass:mass,angle:PhysicsUtils.eRToPr(display.rotation)});
+        let p2Box:p2.Plane=new p2.Box({width:PhysicsUtils.eVToPv(display.width),height:PhysicsUtils.eVToPv(display.height)});
+        p2Body.addShape(p2Box);
+        p2Body.displays=[display];
+        world.addBody(p2Body);
+        egret.Point.release(p);
+        return p2Body;
+    }
+    /**
+     * 创建一个圆形刚体,使物理和显示对象绑定
+     * @param bodyType 刚体类型
+     * @param world 世界
+     * @param wh 父级高度
+     */
+    public static createSimpleCircle(bodyType:number,display:egret.DisplayObject,world:p2.World,wh:number,mass:number=1):p2.Body{
+        let p:egret.Point=PhysicsUtils.epToPp(display.x,display.y,wh);
+        let p2Body:p2.Body=new p2.Body({position:[p.x,p.y],type:bodyType,mass:mass,angle:PhysicsUtils.eRToPr(display.rotation)});
+        let p2Box:p2.Circle=new p2.Circle({radius:PhysicsUtils.eVToPv(display.width)});
+        p2Body.angle=PhysicsUtils.eRToPr(display.rotation);
+        p2Body.addShape(p2Box);
+        p2Body.displays=[display];
+        world.addBody(p2Body);
+        egret.Point.release(p);
+        return p2Body;
+    }
 }

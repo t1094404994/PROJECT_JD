@@ -43,7 +43,7 @@ var BaseSpriteView = (function (_super) {
      * 从父级移除
      */
     BaseSpriteView.prototype.removeFromParent = function () {
-        App.getDisplayUtils().removeFromParent(this);
+        DisplayUtils.removeFromParent(this);
     };
     /**
      *对面板进行显示初始化，用于子类继承
