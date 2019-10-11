@@ -160,7 +160,7 @@ class PhysicsUtils{
     public static createSimpleCircle(bodyType:number,display:egret.DisplayObject,world:p2.World,wh:number,mass:number=1):p2.Body{
         let p:egret.Point=PhysicsUtils.epToPp(display.x,display.y,wh);
         let p2Body:p2.Body=new p2.Body({position:[p.x,p.y],type:bodyType,mass:mass,angle:PhysicsUtils.eRToPr(display.rotation)});
-        let p2Box:p2.Circle=new p2.Circle({radius:PhysicsUtils.eVToPv(display.width)});
+        let p2Box:p2.Circle=new p2.Circle({radius:PhysicsUtils.eVToPv(display.width>>1)});
         p2Body.angle=PhysicsUtils.eRToPr(display.rotation);
         p2Body.addShape(p2Box);
         p2Body.displays=[display];

@@ -41,11 +41,11 @@ var TEST1View = (function (_super) {
         this.displays = [];
         this.bodys = [];
         //高度
-        var height = 900;
+        var height = 805;
         //地面
         var ground = DisplayUtils.createRect(800, 10, 400, 805, 0x000000);
         this.displays.push(ground);
-        ground.rotation = 10;
+        ground.rotation = -10;
         var panle = PhysicsUtils.createSimpleBox(p2.Body.wSTATIC, ground, this.world, height, 0);
         //车轮
         var shape = DisplayUtils.cerateCircle(50, 0, 250, 0xFFFFFF, 2);

@@ -35,7 +35,7 @@ class TEST1View extends BaseEuiView{
         this.displays=[];
         this.bodys=[];
         //高度
-        let height:number=900;
+        let height:number=805;
         //地面
         let ground:eui.Rect=DisplayUtils.createRect(800,10,400,805,0x000000);
         this.displays.push(ground);
