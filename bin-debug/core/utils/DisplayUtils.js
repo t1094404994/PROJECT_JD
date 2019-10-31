@@ -117,6 +117,61 @@ var DisplayUtils = (function () {
             return;
         parent.addChild(child);
     };
+    /**
+     * 创建多边形
+     */
+    DisplayUtils.ceratePolygon = function (pts, x, y) {
+        var shape = new egret.Shape();
+        var pt;
+        var l = pts.length;
+        //开始连线
+        shape.graphics.lineStyle(3, 0xFF0000);
+        shape.graphics.beginFill(0x000000);
+        for (var i = 1; i < l; i++) {
+            pt = pts[i - 1];
+            shape.graphics.moveTo(pt.x, pt.y);
+            if (i != 1)
+                egret.Point.release(pt);
+            pt = pts[i];
+            shape.graphics.lineTo(pt.x, pt.y);
+        }
+        //首尾闭合
+        pt = pts[l - 1];
+        shape.graphics.moveTo(pt.x, pt.y);
+        egret.Point.release(pt);
+        pt = pts[0];
+        shape.graphics.lineTo(pt.x, pt.y);
+        egret.Point.release(pt);
+        shape.graphics.endFill();
+        //锚点,位置
+        shape.anchorOffsetX = shape.width >> 1;
+        shape.anchorOffsetY = shape.height >> 1;
+        shape.x = x;
+        shape.y = y;
+        return shape;
+    };
+    /**
+     * egret.Point点集转换数组点集 [0][0],[0][1],[1][0]...
+     * @param 点集
+     * @param 是否转化成物理坐标
+     * @param 物理世界高度
+     */
+    DisplayUtils.pointToArr = function (ePath, change, hi) {
+        var path = [];
+        var l = ePath.length;
+        var p;
+        for (var i = 0; i < l; i++) {
+            if (change) {
+                p = PhysicsUtils.epToPp(ePath[i].x, ePath[i].y, hi);
+            }
+            else {
+                p = ePath[i];
+            }
+            path.push([p.x, p.y]);
+            egret.Point.release(p);
+        }
+        return path;
+    };
     return DisplayUtils;
 }());
 __reflect(DisplayUtils.prototype, "DisplayUtils");

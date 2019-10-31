@@ -14,16 +14,17 @@ class TEST1View extends BaseEuiView{
         //this.skinName="resource/skins/testView1Skin.exml";
         this.width=App.getStageUtils().getWidth();
         this.height=App.getStageUtils().getHeight();
-        this.addEventListener(egret.TouchEvent.TOUCH_TAP,this.onTap,this);
         //this.createGround();
-        this.car();
+        //this.car();
+        //this.circles();
+        this.polygon();
     }
     private start(){
-        for(let i=0;i<this.bodys.length;i++){
-            console.log("刚体:"+"x"+this.bodys[i].position[0]+"y"+this.bodys[i].position[1]);
-        }
+        // for(let i=0;i<this.bodys.length;i++){
+        //     console.log("刚体:"+"x"+this.bodys[i].position[0]+"y"+this.bodys[i].position[1]);
+        // }
         for(let i=0;i<this.displays.length;i++){
-            console.log("物体:"+this.displays[i].hashCode+"x:"+this.displays[i].x+",y:"+this.displays[i].y)
+            //console.log("物体:"+this.displays[i].hashCode+"x:"+this.displays[i].x+",y:"+this.displays[i].y)
             this.addChild(this.displays[i]);
         }
         this.world.on("postStep",this.mapping.bind(this));
@@ -70,6 +71,96 @@ class TEST1View extends BaseEuiView{
         this.world.addConstraint(constraint2);
         this.start();
     }
+    //40*40框 宽高800  从300-1100 半径10 xy随机20*
+    private circles(){
+        //初始化
+        this.createWorld();
+        this.displays=[];
+        this.bodys=[];
+        //世界高度
+        let height:number=1100;
+        //创建一个底板
+        let panle:eui.Rect=DisplayUtils.createRect(800,10,400,1100);
+        this.displays.push(panle);
+        let panlebody:p2.Body=PhysicsUtils.createSimpleBox(p2.Body.wSTATIC,panle,this.world,height,0);
+        this.bodys.push(panlebody);
+        //创造20*20个圆
+        let N:number=20;
+        let S:number=40;
+        let MinY:number=300;
+        let MinX:number=0;
+        let circle:egret.Shape;
+        let body:p2.Body;
+        let X:number;
+        let Y:number;
+        let color:number;
+        let max:number=0xFFFFFF;
+        for(let i=0;i<N;i++){
+            for(let j=0;j<N;j++){
+                X=MinX+S*j+N+N*Math.random();
+                Y=MinY+S*i+N+N*Math.random();
+                color=Math.random()*max;
+                circle=DisplayUtils.cerateCircle(N>>1,X,Y,color,0);
+                this.displays.push(circle);
+                body=PhysicsUtils.createSimpleCircle(p2.Body.DYNAMIC,circle,this.world,height);
+                this.bodys.push(body);
+            }
+        }
+        //设置对象池 增加运行效率
+        // Pre-fill object pools. Completely optional but good for performance!
+        this.world.overlapKeeper.recordPool.resize(16);
+        this.world.narrowphase.contactEquationPool.resize(1024);
+        this.world.narrowphase.frictionEquationPool.resize(1024);
+        // Set stiffness of all contacts and constraints
+        this.world.setGlobalStiffness(1e8);
+        let solver:p2.GSSolver=new p2.GSSolver();
+        this.world.solver=solver;
+        // Max number of solver iterations to do
+        solver.iterations = 20;
+        // Solver error tolerance
+        solver.tolerance = 0.02;
+        // Enables sleeping of bodies
+        this.world.sleepMode = p2.World.BODY_SLEEPING;
+        this.start();
+    }
+    /** 多边形*/
+    private polygon():void{
+        //初始化
+        this.createWorld();
+        this.displays=[];
+        this.bodys=[];
+        let display:egret.DisplayObject;
+        let body:p2.Body;
+        //时间高度
+        let height:number=1200;
+        //创建背景
+        let back:eui.Rect=DisplayUtils.createRect(1200,800,600,400,0xFFFFFF);
+        this.displays.push(back);
+        //创建底板
+        let panle:eui.Rect=DisplayUtils.createRect(800,10,400,1200);
+        this.displays.push(panle);
+        let panlebody:p2.Body=PhysicsUtils.createSimpleBox(p2.Body.wSTATIC,panle,this.world,height,0);
+        this.bodys.push(panlebody);
+        //多边形
+        let plygon:Polygon=new Polygon();
+        this.displays.push(plygon.onShape());
+        let path:egret.Point[];
+        let pts:Array<Array<number>>;
+        let p:egret.Point;
+        let complete:()=>void=function():void{
+            path=plygon.getPath();
+            p=plygon.getPoint();
+            display=DisplayUtils.ceratePolygon(path,p.x,p.y);
+            pts=DisplayUtils.pointToArr(path,true,height);
+            body=PhysicsUtils.createConcave(p2.Body.KINEMATIC,display,this.world,height,1,pts);
+            this.displays.push(display);
+            this.addChild(display);
+            //测试
+            //this.bodys.push(body);
+        }    
+        plygon.onEvt(this,true,complete);
+        this.start();
+    }
     /**物理世界前进,并且同步所有显示对象*/
     private add(){
         this.world.step(PhysicsUtils.frameTime);
@@ -78,9 +169,6 @@ class TEST1View extends BaseEuiView{
         let world:p2.World=new p2.World({gravity:[0,-9.8],islandSplit:true});
         this.world=world;
         world.sleepMode = p2.World.BODY_SLEEPING;
-    }
-    private onTap(){
-
     }
     private mapping(){
         let len:number=this.bodys.length;
