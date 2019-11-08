@@ -175,15 +175,22 @@ class PhysicsUtils{
      * @param world 物理世界
      * @param wh 父级高度(白鹭)
      * @param mass 质量
-     * @param path 顶点集
+     * @param path 顶点集 相对于父显示对象的位置 fromPolygon函数生成多边形后会自动调整位置
      */
     public static createConcave(bodyType:number,display:egret.DisplayObject,world:p2.World,wh:number,mass:number=1,path:Array<Array<number>>):p2.Body{
-        let p:egret.Point=PhysicsUtils.epToPp(display.x,display.y,wh);
-        let p2Body:p2.Body=new p2.Body({position:[p.x,p.y],type:bodyType,angle:PhysicsUtils.eRToPr(display.rotation),mass:mass});
-        p2Body.fromPolygon(path,{skipSimpleCheck:true});
+        let p2Body:p2.Body=new p2.Body({type:bodyType,angle:PhysicsUtils.eRToPr(display.rotation),mass:mass});
+        let b:boolean=p2Body.fromPolygon(path,{skipSimpleCheck:true});
+        if(!b){
+            console.log(">>>>>>>>>>>>>>>>创建多边形刚体失败");
+            return null;
+        }
+        if(isNaN(p2Body["concavePath"][0][0])){
+            console.log(">>>>>>>>>>>>>>>>>坐标错误");
+            return null;
+        }
         p2Body.displays=[display];
         world.addBody(p2Body);
-        egret.Point.release(p);
+        //egret.Point.release(p);
         return p2Body;
     }
 }

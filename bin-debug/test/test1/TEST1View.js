@@ -1,16 +1,13 @@
 var __reflect = (this && this.__reflect) || function (p, c, t) {
     p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
 };
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __extends = this && this.__extends || function __extends(t, e) { 
+ function r() { 
+ this.constructor = t;
+}
+for (var i in e) e.hasOwnProperty(i) && (t[i] = e[i]);
+r.prototype = e.prototype, t.prototype = new r();
+};
 /**
  * 测试界面
  */
@@ -18,7 +15,7 @@ var TEST1View = (function (_super) {
     __extends(TEST1View, _super);
     function TEST1View($controller, $parent) {
         var _this = _super.call(this, $controller, $parent) || this;
-        _this.h = 800;
+        _this.h = 900;
         //this.skinName="resource/skins/testView1Skin.exml";
         _this.width = App.getStageUtils().getWidth();
         _this.height = App.getStageUtils().getHeight();
@@ -143,12 +140,12 @@ var TEST1View = (function (_super) {
         var display;
         var body;
         //时间高度
-        var height = 1200;
+        var height = this.h;
         //创建背景
-        var back = DisplayUtils.createRect(1200, 800, 600, 400, 0xFFFFFF);
+        var back = DisplayUtils.createRect(1200, height, 600, height / 2, 0xFFFFFF);
         this.displays.push(back);
         //创建底板
-        var panle = DisplayUtils.createRect(800, 10, 400, 1200);
+        var panle = DisplayUtils.createRect(800, 10, 400, height);
         this.displays.push(panle);
         var panlebody = PhysicsUtils.createSimpleBox(p2.Body.wSTATIC, panle, this.world, height, 0);
         this.bodys.push(panlebody);
@@ -159,16 +156,25 @@ var TEST1View = (function (_super) {
         var pts;
         var p;
         var complete = function () {
-            path = plygon.getPath();
+            //相对自身的位置
+            path = plygon.getChangePath();
             p = plygon.getPoint();
             display = DisplayUtils.ceratePolygon(path, p.x, p.y);
-            pts = DisplayUtils.pointToArr(path, true, height);
-            body = PhysicsUtils.createConcave(p2.Body.KINEMATIC, display, this.world, height, 1, pts);
-            this.displays.push(display);
-            this.addChild(display);
-            //测试
-            //this.bodys.push(body);
+            //父对象位置
+            path = plygon.getPath();
+            //物理世界的位置
+            pts = DisplayUtils.pointToArr(path, height);
+            body = PhysicsUtils.createConcave(p2.Body.DYNAMIC, display, this.world, height, 1, pts);
+            //创建物理多边形成功
+            if (body != null) {
+                this.displays.push(display);
+                this.addChild(display);
+                this.bodys.push(body);
+            }
         };
+        this.world.on("addBody", function (evt) {
+            evt.body.setDensity(1);
+        });
         plygon.onEvt(this, true, complete);
         this.start();
     };

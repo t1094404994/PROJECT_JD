@@ -65,7 +65,7 @@ var DisplayUtils = (function () {
      * @param y 中心的位置
      */
     DisplayUtils.createRect = function (w, h, x, y, color) {
-        if (color === void 0) { color = 0x0000000; }
+        if (color === void 0) { color = 0x000000; }
         var rect = new eui.Rect(w, h, color);
         rect.anchorOffsetX = w >> 1;
         rect.anchorOffsetY = h >> 1;
@@ -129,19 +129,15 @@ var DisplayUtils = (function () {
         shape.graphics.beginFill(0x000000);
         for (var i = 1; i < l; i++) {
             pt = pts[i - 1];
-            shape.graphics.moveTo(pt.x, pt.y);
-            if (i != 1)
-                egret.Point.release(pt);
+            shape.graphics.moveTo(pt[0], pt[1]);
             pt = pts[i];
-            shape.graphics.lineTo(pt.x, pt.y);
+            shape.graphics.lineTo(pt[0], pt[1]);
         }
         //首尾闭合
         pt = pts[l - 1];
-        shape.graphics.moveTo(pt.x, pt.y);
-        egret.Point.release(pt);
+        shape.graphics.moveTo(pt[0], pt[1]);
         pt = pts[0];
-        shape.graphics.lineTo(pt.x, pt.y);
-        egret.Point.release(pt);
+        shape.graphics.lineTo(pt[0], pt[1]);
         shape.graphics.endFill();
         //锚点,位置
         shape.anchorOffsetX = shape.width >> 1;
@@ -151,22 +147,16 @@ var DisplayUtils = (function () {
         return shape;
     };
     /**
-     * egret.Point点集转换数组点集 [0][0],[0][1],[1][0]...
+     * 数组点集统一转化
      * @param 点集
-     * @param 是否转化成物理坐标
      * @param 物理世界高度
      */
-    DisplayUtils.pointToArr = function (ePath, change, hi) {
+    DisplayUtils.pointToArr = function (ePath, hi) {
         var path = [];
         var l = ePath.length;
         var p;
         for (var i = 0; i < l; i++) {
-            if (change) {
-                p = PhysicsUtils.epToPp(ePath[i].x, ePath[i].y, hi);
-            }
-            else {
-                p = ePath[i];
-            }
+            p = PhysicsUtils.epToPp(ePath[i][0], ePath[i][1], hi);
             path.push([p.x, p.y]);
             egret.Point.release(p);
         }

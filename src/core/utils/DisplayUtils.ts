@@ -60,7 +60,7 @@ class DisplayUtils{
      * @param x 中心的位置
      * @param y 中心的位置
      */
-    public static createRect(w:number,h:number,x:number,y:number,color:number=0x0000000):eui.Rect{
+    public static createRect(w:number,h:number,x:number,y:number,color:number=0x000000):eui.Rect{
         let rect:eui.Rect=new eui.Rect(w,h,color);
         rect.anchorOffsetX=w>>1;
         rect.anchorOffsetY=h>>1;
@@ -116,27 +116,24 @@ class DisplayUtils{
     /**
      * 创建多边形
      */
-    public static ceratePolygon(pts:egret.Point[],x?:number,y?:number):egret.Shape{
+    public static ceratePolygon(pts:Array<Array<number>>,x?:number,y?:number):egret.Shape{
         let shape:egret.Shape=new egret.Shape();
-        let pt:egret.Point;
+        let pt:Array<number>;
         let l:number=pts.length;
         //开始连线
         shape.graphics.lineStyle(3,0xFF0000);
         shape.graphics.beginFill(0x000000);
         for(let i=1;i<l;i++){
             pt=pts[i-1];
-            shape.graphics.moveTo(pt.x,pt.y);
-            if(i!=1) egret.Point.release(pt);
+            shape.graphics.moveTo(pt[0],pt[1]);
             pt=pts[i];
-            shape.graphics.lineTo(pt.x,pt.y);
+            shape.graphics.lineTo(pt[0],pt[1]);
         }
         //首尾闭合
         pt=pts[l-1];
-        shape.graphics.moveTo(pt.x,pt.y);
-        egret.Point.release(pt);
+        shape.graphics.moveTo(pt[0],pt[1]);
         pt=pts[0];
-        shape.graphics.lineTo(pt.x,pt.y);
-        egret.Point.release(pt);
+        shape.graphics.lineTo(pt[0],pt[1]);
         shape.graphics.endFill();
         //锚点,位置
         shape.anchorOffsetX=shape.width>>1;
@@ -146,21 +143,16 @@ class DisplayUtils{
         return shape;
     }
     /**
-     * egret.Point点集转换数组点集 [0][0],[0][1],[1][0]...
+     * 数组点集统一转化
      * @param 点集
-     * @param 是否转化成物理坐标
      * @param 物理世界高度
      */
-    public static pointToArr(ePath:Array<egret.Point>,change?:boolean,hi?:number):Array<Array<number>>{
+    public static pointToArr(ePath:Array<Array<number>>,hi:number):Array<Array<number>>{
         let path:Array<Array<number>>=[];
         let l:number=ePath.length;
         let p:egret.Point;
         for(let i=0;i<l;i++){
-            if(change){
-                p=PhysicsUtils.epToPp(ePath[i].x,ePath[i].y,hi);
-            }else{
-                p=ePath[i];
-            }
+            p=PhysicsUtils.epToPp(ePath[i][0],ePath[i][1],hi);
             path.push([p.x,p.y]);
             egret.Point.release(p);
         }

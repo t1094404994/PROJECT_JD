@@ -7,7 +7,7 @@ class TEST1View extends BaseEuiView{
     private body:p2.Body; //引用
     private display:egret.DisplayObject; //引用
     private displays:Array<egret.DisplayObject>; //引用
-    private h:number=800;
+    private h:number=900;
     private lastCall:number;
     constructor($controller:BaseController,$parent:egret.DisplayObjectContainer){
         super($controller,$parent);
@@ -132,32 +132,41 @@ class TEST1View extends BaseEuiView{
         let display:egret.DisplayObject;
         let body:p2.Body;
         //时间高度
-        let height:number=1200;
+        let height:number=this.h;
         //创建背景
-        let back:eui.Rect=DisplayUtils.createRect(1200,800,600,400,0xFFFFFF);
+        let back:eui.Rect=DisplayUtils.createRect(1200,height,600,height/2,0xFFFFFF);
         this.displays.push(back);
         //创建底板
-        let panle:eui.Rect=DisplayUtils.createRect(800,10,400,1200);
+        let panle:eui.Rect=DisplayUtils.createRect(800,10,400,height);
         this.displays.push(panle);
         let panlebody:p2.Body=PhysicsUtils.createSimpleBox(p2.Body.wSTATIC,panle,this.world,height,0);
         this.bodys.push(panlebody);
         //多边形
         let plygon:Polygon=new Polygon();
         this.displays.push(plygon.onShape());
-        let path:egret.Point[];
+        let path:Array<Array<number>>
         let pts:Array<Array<number>>;
         let p:egret.Point;
         let complete:()=>void=function():void{
-            path=plygon.getPath();
+            //相对自身的位置
+            path=plygon.getChangePath();
             p=plygon.getPoint();
             display=DisplayUtils.ceratePolygon(path,p.x,p.y);
-            pts=DisplayUtils.pointToArr(path,true,height);
-            body=PhysicsUtils.createConcave(p2.Body.KINEMATIC,display,this.world,height,1,pts);
-            this.displays.push(display);
-            this.addChild(display);
-            //测试
-            //this.bodys.push(body);
-        }    
+            //父对象位置
+            path=plygon.getPath();
+            //物理世界的位置
+            pts=DisplayUtils.pointToArr(path,height);
+            body=PhysicsUtils.createConcave(p2.Body.DYNAMIC,display,this.world,height,1,pts);
+            //创建物理多边形成功
+            if(body!=null){
+                this.displays.push(display);
+                this.addChild(display);
+                this.bodys.push(body);
+            }
+        }
+        this.world.on("addBody",function(evt){
+            evt.body.setDensity(1);
+        });
         plygon.onEvt(this,true,complete);
         this.start();
     }

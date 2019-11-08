@@ -5,7 +5,9 @@ class Polygon{
     //回调
     private callFun:Function;
     //记录点集
-    private _path:Array<egret.Point>;
+    private _path:Array<Array<number>>;
+    //记录的点集 相对于自身的坐标
+    private _changePath:Array<Array<number>>;
     //画布 显示移动轨迹
     private shape:egret.Shape;
     //通过多边形的最小最大算出其对应四边形的位置
@@ -45,56 +47,59 @@ class Polygon{
     /** 开始点击*/
     private onBegin(e:egret.TouchEvent){
         this._path=[];
-        let p=egret.Point.create(e.localX,e.localY);
+        let p:Array<number>=[e.localX,e.localY];
         this._path.push(p);
         //绘图
         this.shape.graphics.lineStyle(3,0x00FF00);
         this.shape.graphics.beginFill(0xFF00FF);
-        this.shape.graphics.moveTo(p.x,p.y);
+        this.shape.graphics.moveTo(p[0],p[1]);
         //初始化
-        this.minX=p.x;
-        this.maxX=p.x;
-        this.minY=p.y;
-        this.maxY=p.y;
+        this.minX=p[0];
+        this.maxX=p[0];
+        this.minY=p[1];
+        this.maxY=p[1];
     }
     /** 移动*/
     private onMove(e:egret.TouchEvent){
-        let lastP:egret.Point=this._path[this._path.length-1];
+        let lastP:Array<number>=this._path[this._path.length-1];
         //停滞判定
-        if(e.localX!=lastP.x||e.localY!=lastP.y){
+        if(e.localX!=lastP[0]||e.localY!=lastP[1]){
+            //计算两个邻接线段的弧度 如果弧度大于阈值
             //绘图
-            let p=egret.Point.create(e.localX,e.localY);
+            let p:Array<number>=[e.localX,e.localY];
             //更新
-            this.minX=this.minX<p.x?this.minX:p.x;
-            this.maxX=this.maxX>p.x?this.maxX:p.x;
-            this.minY=this.minY<p.y?this.minY:p.y;
-            this.maxY=this.maxY>p.y?this.maxY:p.y;
+            this.minX=this.minX<p[0]?this.minX:p[0];
+            this.maxX=this.maxX>p[0]?this.maxX:p[0];
+            this.minY=this.minY<p[1]?this.minY:p[1];
+            this.maxY=this.maxY>p[1]?this.maxY:p[1];
             //绘图
             this._path.push(p);
-            this.shape.graphics.lineTo(p.x,p.y);
-            this.shape.graphics.moveTo(p.x,p.y);
+            this.shape.graphics.lineTo(p[0],p[1]);
+            this.shape.graphics.moveTo(p[0],p[1]);
         }
     }
     /** 松开*/
     private onEnd(e:egret.TouchEvent){
-        let p=egret.Point.create(e.localX,e.localY);
+        let p:Array<number>=[e.localX,e.localY];
         //更新
-        this.minX=this.minX<p.x?this.minX:p.x;
-        this.maxX=this.maxX>p.x?this.maxX:p.x;
-        this.minY=this.minY<p.y?this.minY:p.y;
-        this.maxY=this.maxY>p.y?this.maxY:p.y;
+        this.minX=this.minX<p[0]?this.minX:p[0];
+        this.maxX=this.maxX>p[0]?this.maxX:p[0];
+        this.minY=this.minY<p[1]?this.minY:p[1];
+        this.maxY=this.maxY>p[1]?this.maxY:p[1];
         //绘图
         this._path.push(p);
-        this.shape.graphics.lineTo(p.x,p.y);
-        this.shape.graphics.moveTo(p.x,p.y);
+        this.shape.graphics.lineTo(p[0],p[1]);
+        this.shape.graphics.moveTo(p[0],p[1]);
         //首尾相连
-        this.shape.graphics.lineTo(this._path[0].x,this._path[0].y);
+        this.shape.graphics.lineTo(this._path[0][0],this._path[0][1]);
         this.shape.graphics.endFill();
         this.onComplete();
     }
     /** 完成一个过程*/
     private onComplete(){
         this.shape.graphics.clear();
+        //清除一些不必要的点
+        this._path=MathUtil.removeCollinearPoints(this._path,Math.PI/6);
         if(MathUtil.checkPolygon(this._path)){
             this.changePath();
             this.callFun.call(this.lister);
@@ -109,17 +114,23 @@ class Polygon{
         return egret.Point.create(x,y);
     }
     /** 获得点集*/
-    public getPath():Array<egret.Point>{
+    public getPath():Array<Array<number>>{
         return this._path;
     }
     /** 转换成方形的相对坐标*/
     private changePath():void{
         let l:number=this._path.length;
-        let p:egret.Point;
+        let p:Array<number>;
+        let p2:Array<number>;
+        this._changePath=[];
         for(let i=0;i<l;i++){
             p=this._path[i];
-            p.x=p.x-this.minX;
-            p.y=p.y-this.minY;
+            p2=[p[0]-this.minX,p[1]-this.minY];
+            this._changePath.push(p2);
         }
+    }
+    /** 获得相对位置的点集*/
+    public getChangePath():Array<Array<number>>{
+        return this._changePath;
     }
 }
