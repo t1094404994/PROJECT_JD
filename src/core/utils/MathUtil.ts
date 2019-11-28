@@ -94,4 +94,20 @@ class MathUtil{
         }
         return path;
     }
+    /**
+     * 计算两点之间的距离
+     * @param pA 
+     * @param pB 
+     */
+    public static TDistence(pA:Array<number>,pB:Array<number>):number{
+        return Math.sqrt((pA[0]-pB[0])*(pA[0]-pB[0])+(pA[1]-pB[1])*(pA[1]-pB[1]));
+    }
+    /**
+     * 求一元二次方程的跟 aX^2+bX+c
+     */
+    public static equation2Slove(a:number,b:number,c:number):Array<number>{
+        let delta:number=b*b-4*a*c;
+        if(delta<0) return undefined;
+        else return [(-b+Math.sqrt(delta))/(2*a),(-b-Math.sqrt(delta))/(2*a)];
+    }
 }

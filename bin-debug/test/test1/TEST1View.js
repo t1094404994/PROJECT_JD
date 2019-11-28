@@ -16,120 +16,18 @@ var TEST1View = (function (_super) {
     function TEST1View($controller, $parent) {
         var _this = _super.call(this, $controller, $parent) || this;
         _this.h = 900;
-        //this.skinName="resource/skins/testView1Skin.exml";
         _this.width = App.getStageUtils().getWidth();
         _this.height = App.getStageUtils().getHeight();
-        //this.createGround();
-        //this.car();
-        //this.circles();
-        _this.polygon();
+        //this.polygon();
+        _this.addTrack();
         return _this;
     }
     TEST1View.prototype.start = function () {
-        // for(let i=0;i<this.bodys.length;i++){
-        //     console.log("刚体:"+"x"+this.bodys[i].position[0]+"y"+this.bodys[i].position[1]);
-        // }
         for (var i = 0; i < this.displays.length; i++) {
-            //console.log("物体:"+this.displays[i].hashCode+"x:"+this.displays[i].x+",y:"+this.displays[i].y)
             this.addChild(this.displays[i]);
         }
         this.world.on("postStep", this.mapping.bind(this));
         App.getFrameManager().creadFrameHander(this.add, this, 1, -1);
-    };
-    /**车*/
-    TEST1View.prototype.car = function () {
-        this.createWorld();
-        this.displays = [];
-        this.bodys = [];
-        //高度
-        var height = 805;
-        //地面
-        var ground = DisplayUtils.createRect(800, 10, 400, 805, 0x000000);
-        this.displays.push(ground);
-        ground.rotation = 10;
-        var panle = PhysicsUtils.createSimpleBox(p2.Body.wSTATIC, ground, this.world, height, 0);
-        //车轮
-        var shape = DisplayUtils.cerateCircle(50, 0, 250, 0xFFFFFF, 2);
-        this.displays.push(shape);
-        var wheelBody1 = PhysicsUtils.createSimpleCircle(p2.Body.DYNAMIC, shape, this.world, height);
-        shape = DisplayUtils.cerateCircle(50, 200, 250, 0xFFFFFF, 2);
-        this.displays.push(shape);
-        var wheelBody2 = PhysicsUtils.createSimpleCircle(p2.Body.DYNAMIC, shape, this.world, height);
-        //车身
-        var rect = DisplayUtils.createRect(200, 200, 100, 100, 0x7F4B4B);
-        this.displays.push(rect);
-        var chassisBody = PhysicsUtils.createSimpleBox(p2.Body.DYNAMIC, rect, this.world, height);
-        //刚体加入物理世界
-        this.bodys.push(panle);
-        this.bodys.push(wheelBody1);
-        this.bodys.push(wheelBody2);
-        this.bodys.push(chassisBody);
-        //创建车轮和车身的旋转约束(节点)
-        var constraint1 = new p2.RevoluteConstraint(chassisBody, wheelBody1, {
-            localPivotA: [-2, -3],
-            localPivotB: [0, 0],
-            collideConnected: false
-        });
-        var constraint2 = new p2.RevoluteConstraint(chassisBody, wheelBody2, {
-            localPivotA: [2, -3],
-            localPivotB: [0, 0],
-            collideConnected: false
-        });
-        this.world.addConstraint(constraint1);
-        this.world.addConstraint(constraint2);
-        this.start();
-    };
-    //40*40框 宽高800  从300-1100 半径10 xy随机20*
-    TEST1View.prototype.circles = function () {
-        //初始化
-        this.createWorld();
-        this.displays = [];
-        this.bodys = [];
-        //世界高度
-        var height = 1100;
-        //创建一个底板
-        var panle = DisplayUtils.createRect(800, 10, 400, 1100);
-        this.displays.push(panle);
-        var panlebody = PhysicsUtils.createSimpleBox(p2.Body.wSTATIC, panle, this.world, height, 0);
-        this.bodys.push(panlebody);
-        //创造20*20个圆
-        var N = 20;
-        var S = 40;
-        var MinY = 300;
-        var MinX = 0;
-        var circle;
-        var body;
-        var X;
-        var Y;
-        var color;
-        var max = 0xFFFFFF;
-        for (var i = 0; i < N; i++) {
-            for (var j = 0; j < N; j++) {
-                X = MinX + S * j + N + N * Math.random();
-                Y = MinY + S * i + N + N * Math.random();
-                color = Math.random() * max;
-                circle = DisplayUtils.cerateCircle(N >> 1, X, Y, color, 0);
-                this.displays.push(circle);
-                body = PhysicsUtils.createSimpleCircle(p2.Body.DYNAMIC, circle, this.world, height);
-                this.bodys.push(body);
-            }
-        }
-        //设置对象池 增加运行效率
-        // Pre-fill object pools. Completely optional but good for performance!
-        this.world.overlapKeeper.recordPool.resize(16);
-        this.world.narrowphase.contactEquationPool.resize(1024);
-        this.world.narrowphase.frictionEquationPool.resize(1024);
-        // Set stiffness of all contacts and constraints
-        this.world.setGlobalStiffness(1e8);
-        var solver = new p2.GSSolver();
-        this.world.solver = solver;
-        // Max number of solver iterations to do
-        solver.iterations = 20;
-        // Solver error tolerance
-        solver.tolerance = 0.02;
-        // Enables sleeping of bodies
-        this.world.sleepMode = p2.World.BODY_SLEEPING;
-        this.start();
     };
     /** 多边形*/
     TEST1View.prototype.polygon = function () {
@@ -178,9 +76,52 @@ var TEST1View = (function (_super) {
         plygon.onEvt(this, true, complete);
         this.start();
     };
+    /**
+     * 添加一个追踪体
+     */
+    TEST1View.prototype.addTrack = function () {
+        var circle = DisplayUtils.cerateCircle(50, 200, 200, 2);
+        var tarck = new Track();
+        tarck._displays = [circle];
+        tarck.setPA([200, 200]);
+        this.tarck = tarck;
+        this.displays = [circle];
+        //高度
+        var height = this.h;
+        //创建背景
+        var back = DisplayUtils.createRect(1200, height, 600, height / 2, 0xFFFFFF);
+        this.displays.push(back);
+        App.getFrameManager().creadFrameHander(this.onTrack, this, 10, -1);
+        this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onTap, this);
+        this.addChild(back);
+        this.addChild(circle);
+    };
+    /**驱动跟踪体*/
+    TEST1View.prototype.onTrack = function () {
+        if (this.tarck.start) {
+            this.tarck.onStep(20);
+            var circle = this.tarck._displays[0];
+            circle.x = this.tarck.x;
+            circle.y = this.tarck.y;
+        }
+    };
+    TEST1View.prototype.onTap = function (evt) {
+        this.tarck.reset();
+        this.tarck.setPB([evt.localX, evt.localY]);
+        this.tarck.start = true;
+    };
     /**物理世界前进,并且同步所有显示对象*/
     TEST1View.prototype.add = function () {
-        this.world.step(PhysicsUtils.frameTime);
+        if (this.timeSinceLastCall == undefined) {
+            this.timeSinceLastCall = Date.now() / 1000; //单位秒
+            this.world.step(PhysicsUtils.frameTime);
+        }
+        else {
+            this.timeSinceLastCall = Date.now() / 1000 - this.timeSinceLastCall;
+            //maxSubSteps 跳帧的最大步长,如果间隔超过单位时间*步长,就会失速 如果最大步长太大,间隔太久,容易造成顿卡
+            this.world.step(PhysicsUtils.frameTime, this.timeSinceLastCall, 10);
+            this.timeSinceLastCall = Date.now() / 1000;
+        }
     };
     TEST1View.prototype.createWorld = function () {
         var world = new p2.World({ gravity: [0, -9.8], islandSplit: true });

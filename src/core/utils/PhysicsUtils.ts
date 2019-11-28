@@ -179,7 +179,8 @@ class PhysicsUtils{
      */
     public static createConcave(bodyType:number,display:egret.DisplayObject,world:p2.World,wh:number,mass:number=1,path:Array<Array<number>>):p2.Body{
         let p2Body:p2.Body=new p2.Body({type:bodyType,angle:PhysicsUtils.eRToPr(display.rotation),mass:mass});
-        let b:boolean=p2Body.fromPolygon(path,{skipSimpleCheck:true});
+        //使用相对父显示对象的位置,位置也会算好
+        let b:boolean=p2Body.fromPolygon(path,{skipSimpleCheck:false});
         if(!b){
             console.log(">>>>>>>>>>>>>>>>创建多边形刚体失败");
             return null;
@@ -190,7 +191,6 @@ class PhysicsUtils{
         }
         p2Body.displays=[display];
         world.addBody(p2Body);
-        //egret.Point.release(p);
         return p2Body;
     }
 }
